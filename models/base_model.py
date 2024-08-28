@@ -36,15 +36,9 @@ class BaseModel():
 
         if kwargs:  # ? is not impty
             for key, value in kwargs.items(): # ? loop in the dict
-                if key == '__class__':
-                    continue
-                elif key in ['created_at', 'updated_at']:
-                    self.__dict__[key] = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')
+
                     if hasattr(self, key) == True: # ? if the key is in the dict
-                        setattr(self, key, datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f')) # ? set the key with the value
-                else:
-                    self.__dict__[key] = value
-                    if hasattr(self, key) == True: # ? if the key is in the dict
+                        self.__dict__[key] = value
                         setattr(self, key, value) # ? set the key with the value
 
     # tODO ''' SAVE method '''
@@ -58,24 +52,29 @@ class BaseModel():
 
     # tODO '''TO_DICT method'''
 
+    # def to_dict(self):
+    #     my_dict_z = {}
+    #     x = self.updated_at.isoformat()
+    #     y = self.created_at.isoformat()
+
+    #     lk = self.__dict__
+
+    #     for k, v in lk.items():
+    #         if k == "updated_at":
+    #             my_dict_z["__class__"] = self.__class__.__name__
+    #             my_dict_z[k] = x
+    #             continue
+    #         elif k == "created_at":
+    #             my_dict_z[k] = y
+    #         else:
+    #             my_dict_z[k] = v
+
+    #     return my_dict_z
+    
     def to_dict(self):
-        my_dict_z = {}
-        x = self.updated_at.isoformat()
-        y = self.created_at.isoformat()
-
-        lk = self.__dict__
-
-        for k, v in lk.items():
-            if k == "updated_at":
-                my_dict_z["__class__"] = self.__class__.__name__
-                my_dict_z[k] = x
-                continue
-            elif k == "created_at":
-                my_dict_z[k] = y
-            else:
-                my_dict_z[k] = v
-
-        return my_dict_z
+        state_dict = self.__dict__.copy()
+        state_dict.pop('_sa_instance_state', None)
+        return state_dict
 
     # tODO ''' __STR__ method return string when print the object '''
 

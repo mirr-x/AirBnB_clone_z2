@@ -50,7 +50,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         else:
             listx.remove(listx[0])
-            
+
             dictx = self.args_to_dict(listx)
 
             instance = self.classes[classe_nm](**dictx)
@@ -58,7 +58,6 @@ class HBNBCommand(cmd.Cmd):
             instance.save()
             instance_id = instance.id
             print(instance_id)
-
 
     def do_show(self, content):
         """
@@ -128,33 +127,22 @@ class HBNBCommand(cmd.Cmd):
             if bol != True:
                 print("** no instance found **")
 
-    def do_all(self, content):
-        '''
-        - display all instances based on class name or not 
+    def do_all(self, args):
+        """ Shows all objects, or all objects of a class"""
+        listx = []
 
-            - Usage => all [className] or all
-        '''
-
-        lis = content.split(" ")
-        ln = len(content)
-        lis_ln = len(lis)
-        bol = None
-
-        if ln == 0:
-            bol = True
-        elif lis[0] not in globals() or lis_ln > 1:
-            print("** class doesn't exist **")
+        if args != "":
+            args = split(' ', args)[0]  # remove possible trailing args
+            if args not in self.classes:
+                print("** class doesn't exist **")
+                return
+            objects = storage.all(self.classes[args])
+            for k, v in objects.items():
+                listx.append(str(v))
         else:
-            bol = True
-
-        if bol == True:
-            all_dict = storage.all().copy()
-            all_dict_lis = []
-            for i in all_dict.keys():
-                sp = i.split(".")
-                x = self.formating(all_dict[i])
-                form_full = "[{:s}] ({:s}) {:s}".format(sp[0], sp[1], str(x))
-                print(form_full)
+            for k, v in storage.all().items():
+                listx.append(str(v))
+        print(listx)
 
     def do_update(self, content):
         '''
@@ -287,8 +275,8 @@ class HBNBCommand(cmd.Cmd):
 
         return (full_format)
 
-    def attrebute_checker(self,class_name):
-        
+    def attrebute_checker(self, class_name):
+
         #!attrbute list
         if class_name == User.__name__:  # ? User
             attrbutes = [x for x in User.__dict__ if not x.startswith('__')]
@@ -305,7 +293,7 @@ class HBNBCommand(cmd.Cmd):
         elif class_name == Review.__name__:  # ? Place
             attrbutes = [x for x in Review.__dict__ if not x.startswith('__')]
         #!attrbute list
-        
+
         return (attrbutes)
 
     def args_to_dict(self, args):
@@ -443,14 +431,14 @@ class HBNBCommand(cmd.Cmd):
                 dic = storage.all().copy()
 
                 #!! if user updating multi elements
-                #Todo
+                # Todo
                 if '{' in lis[1] and '}' in lis[1]:
-                    #Todo zzzzzzzzzzzz
-                    
+                    # Todo zzzzzzzzzzzz
+
                     z_bool = False
                     cn = 0
                     zzz_id = ""
-                    #? get the id 
+                    # ? get the id
                     for z in method[1]:
                         if z == "'" or z == '"':
                             if cn == 1:
@@ -459,8 +447,7 @@ class HBNBCommand(cmd.Cmd):
                             cn += 1
                         elif z_bool:
                             zzz_id += z
-                    #? get the id 
-
+                    # ? get the id
 
                     str_z = lis[1]
                     v = ""
@@ -479,8 +466,8 @@ class HBNBCommand(cmd.Cmd):
 
                     dictionary = ast.literal_eval(v)
 
-                    if type(dictionary) == dict :
-                        
+                    if type(dictionary) == dict:
+
                         #!attrbute list
                         attrbutes_z = self.attrebute_checker(lis[0])
                         #!attrbute list
@@ -493,33 +480,30 @@ class HBNBCommand(cmd.Cmd):
                         vo_z = 0
                         for z in dic.keys():
                             if dic[z]["id"] == zzz_id and dic[z]["__class__"] == lis[0]:
-                                 for z_1 in dictionary.keys():
+                                for z_1 in dictionary.keys():
                                     dic[z][z_1] = dictionary[z_1]
                                     vo_z = 1
                             if vo_z == 1:
                                 dic[z]["updated_at"] = datetime.now().isoformat()
                                 break
-                            
 
                         with open("file.json", "w")as f:
                             json.dump(dic, f, indent=2)
 
                         return
 
-
             #!! if user updating just one element
                 method_parameter = method[1].split(")")
-                full_paramater = method_parameter[0].replace('"', '')            
+                full_paramater = method_parameter[0].replace('"', '')
                 param_lis1 = full_paramater.replace(" ", "")
                 param_lis = param_lis1.split(",")
 
                 not_allowed = ["id", "created_at", "updated_at"]
-                if param_lis[1] not in not_allowed :
+                if param_lis[1] not in not_allowed:
 
                     #!attrbute list
                     attrbutes = self.attrebute_checker(lis[0])
                     #!attrbute list
-                    
 
                     if param_lis[1] in attrbutes:
                         for x in dic.keys():
@@ -538,11 +522,11 @@ class HBNBCommand(cmd.Cmd):
                         if bol == 1:
                             with open("file.json", "w")as f:
                                 json.dump(dic, f, indent=2)
-                        elif bol == 0 :
+                        elif bol == 0:
                             print("** no instance found **")
                     else:
                         print("** no attribute found **")
-                else :
+                else:
                     print("** You do not have the permesions to do this **")
             else:
                 print("*** Unknown classe: {:s}".format(content))
@@ -553,4 +537,3 @@ class HBNBCommand(cmd.Cmd):
     #!!!!!!!!!!!!!!!
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-

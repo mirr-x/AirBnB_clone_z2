@@ -3,6 +3,7 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey
 from models.state import State
+from sqlalchemy.orm import relationship
 
 class City(BaseModel, Base):
     '''
@@ -21,4 +22,10 @@ class City(BaseModel, Base):
     name = Column(
         String(128),
         nullable=False
+    )
+
+    places = relationship(
+        "Place",
+        cascade='all, delete, delete-orphan',
+        backref="cities"
     )
