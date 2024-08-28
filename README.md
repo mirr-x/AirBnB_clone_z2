@@ -246,7 +246,7 @@ $ python3 unittest -m tests/test_console.py
 
 ## Contributors
 
-- Mendie Uwemedimo
+- mirr
 
 ## License
 
