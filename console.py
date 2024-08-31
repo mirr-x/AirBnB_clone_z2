@@ -13,6 +13,7 @@ from models.place import Place
 from models.review import Review
 import ast
 from re import split
+from sqlalchemy.exc import IntegrityError
 
 
 class HBNBCommand(cmd.Cmd):
@@ -53,11 +54,14 @@ class HBNBCommand(cmd.Cmd):
 
             dictx = self.args_to_dict(listx)
 
-            instance = self.classes[classe_nm](**dictx)
+            try:
+                instance = self.classes[classe_nm](**dictx)
+                instance.save()
+                print(instance.id)
+            except IntegrityError as e:
+                print(e)
+                return
 
-            instance.save()
-            instance_id = instance.id
-            print(instance_id)
 
     def do_show(self, content):
         """
